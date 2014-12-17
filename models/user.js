@@ -152,9 +152,7 @@ User.getAll = function (callback) {
 User.create = function (data, callback) {
     // construct a new instance of our class with the data, so it can
     // validate and extend it, etc., if we choose to do that in the future:
-    
-	console.log(data);
-	
+    	
 	var node = db.createNode(data);
     var user = new User(node);
 

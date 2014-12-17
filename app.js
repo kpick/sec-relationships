@@ -16,15 +16,9 @@ app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(bodyParser.raw());
-app.use(methodOverride('_method'));
-
-//app.use(express.favicon());
-//app.use(app.router);
-
-//app.locals({
-//    title: 'Define Relationship'    // default title
-	//});
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(methodOverride());
 
 //Routes
 
