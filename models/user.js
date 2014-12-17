@@ -152,7 +152,10 @@ User.getAll = function (callback) {
 User.create = function (data, callback) {
     // construct a new instance of our class with the data, so it can
     // validate and extend it, etc., if we choose to do that in the future:
-    var node = db.createNode(data);
+    
+	console.log(data);
+	
+	var node = db.createNode(data);
     var user = new User(node);
 
     // but we do the actual persisting with a Cypher query, so we can also

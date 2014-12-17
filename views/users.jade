@@ -12,7 +12,7 @@ block content
     else
         p There are no users currently.
 
-    form(action='', method='POST')
+    form(action='/users', method='POST')
         p Create a new user:
         input(type='text', name='name', placeholder='Name', required)
         input(type='submit', value='Create')
