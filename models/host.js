@@ -11,11 +11,11 @@ var Host = module.exports = function Host(_node) {
 
 // public instance properties:
 
-Object.defineProperty(User.prototype, 'id', {
+Object.defineProperty(Host.prototype, 'id', {
     get: function () { return this._node.id; }
 });
 
-Object.defineProperty(User.prototype, 'name', {
+Object.defineProperty(Host.prototype, 'name', {
     get: function () {
         return this._node.data['name'];
     },
@@ -23,6 +23,16 @@ Object.defineProperty(User.prototype, 'name', {
         this._node.data['name'] = name;
     }
 });
+
+Object.defineProperty(Host.prototype, 'vulnScore', {
+    get: function () {
+        return this._node.data['vulnScore'];
+    },
+    set: function (name) {
+        this._node.data['vulnScore'] = vulnScore;
+    }
+});
+
 
 // public instance methods:
 
@@ -33,12 +43,12 @@ Host.prototype.save = function (callback) {
 };
 
 Host.prototype.del = function (callback) {
-    // use a Cypher query to delete both this user and his/her following
+    // use a Cypher query to delete both this host and any 
     // relationships in one transaction and one network request:
     // (note that this'll still fail if there are any relationships attached
     // of any other types, which is good because we don't expect any.)
     var query = [
-        'MATCH (user:User)',
+        'MATCH (host:Host)',
         'WHERE ID(host) = {hostId}',
         'DELETE host',
         'WITH host',
@@ -82,7 +92,7 @@ Host.getAll = function (callback) {
     });
 };
 
-// creates the user and persists (saves) it to the db, incl. indexing it:
+// creates the host and persists (saves) it to the db, incl. indexing it:
 Host.create = function (data, callback) {
     // construct a new instance of our class with the data, so it can
     // validate and extend it, etc., if we choose to do that in the future:
@@ -94,7 +104,7 @@ Host.create = function (data, callback) {
     // apply a label at the same time. (the save() method doesn't support
     // that, since it uses Neo4j's REST API, which doesn't support that.)
     var query = [
-        'CREATE (user:Host {data})',
+        'CREATE (host:Host {data})',
         'RETURN host',
     ].join('\n');
 
@@ -104,7 +114,7 @@ Host.create = function (data, callback) {
 
     db.query(query, params, function (err, results) {
         if (err) return callback(err);
-        var user = new Host(results[0]['host']);
+        var host = new Host(results[0]['host']);
         callback(null, host);
     });
 };
