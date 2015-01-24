@@ -1,0 +1,19 @@
+extends layout
+
+block content
+    h1 Hosts
+
+    if hosts.length
+        p Here are the current hosts:
+        ul.hosts
+            for host in hosts
+                li.host
+                    a(href='/hosts/#{host.id}') #{host.name}
+    else
+        p There are no hosts currently.
+
+    form(action='/hosts', method='POST')
+        p Create a new host:
+        input(type='text', name='name', placeholder='Name', required)
+        input(type='text', name='vulnScore', placeholder='Vuln Score', required)
+        input(type='submit', value='Create')

@@ -18,7 +18,7 @@ exports.list = function (req, res, next) {
 /**
  * POST /users
  */
-exports.create = function (req, res, next) {
+exports.create = function (req, res, next){
     User.create({
         name: req.body['name']
     }, function (err, user) {

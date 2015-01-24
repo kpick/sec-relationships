@@ -33,6 +33,16 @@ app.del('/users/:id', routes.users.del);
 app.post('/users/:id/follow', routes.users.follow);
 app.post('/users/:id/unfollow', routes.users.unfollow);
 
+app.get('/hosts', routes.hosts.list);
+app.post('/hosts', routes.hosts.create);
+app.get('/hosts/:id', routes.hosts.show);
+app.post('/hosts/:id', routes.hosts.edit);
+app.del('/hosts/:id', routes.hosts.del);
+
+app.post('/hosts/:id/connect', routes.hosts.connect);
+app.post('/hosts/:id/disconnect', routes.hosts.disconnect);
+
+
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening at: http://localhost:%d/', app.get('port'));
 });

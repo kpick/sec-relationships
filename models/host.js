@@ -52,7 +52,7 @@ Host.prototype.del = function (callback) {
         'WHERE ID(host) = {hostId}',
         'DELETE host',
         'WITH host',
-        'MATCH (host) -[rel:owned]- (other)',
+        'MATCH (host) -[rel:connected]- (other)',
         'DELETE rel',
     ].join('\n')
 
@@ -116,6 +116,51 @@ Host.create = function (data, callback) {
         if (err) return callback(err);
         var host = new Host(results[0]['host']);
         callback(null, host);
+    });
+};
+
+Host.prototype.connect = function (other, callback) {
+    this._node.createRelationshipTo(other._node, 'connected', {}, function (err, rel) {
+        callback(err);
+    });
+};
+
+// calls callback w/ (err, following, others) where following is an array of
+// users this user follows, and others is all other users minus him/herself.
+Host.prototype.getConnectedAndOthers = function (callback) {
+    // query all users and whether we follow each one or not:
+    var query = [
+        'MATCH (host:Host), (other:Host)',
+        'OPTIONAL MATCH (host) -[rel:connected]-> (other)',
+        'WHERE ID(host) = {hostId}',
+        'RETURN other, COUNT(rel)', // COUNT(rel) is a hack for 1 or 0
+    ].join('\n')
+
+    var params = {
+        hostId: this.id,
+    };
+
+    var host = this;
+    db.query(query, params, function (err, results) {
+        if (err) return callback(err);
+
+        var connected = [];
+        var others = [];
+
+        for (var i = 0; i < results.length; i++) {
+            var other = new User(results[i]['other']);
+            var connected = results[i]['COUNT(rel)'];
+
+            if (host.id === other.id) {
+                continue;
+            } else if (connected) {
+                connected.push(other);
+            } else {
+                others.push(other);
+            }
+        }
+
+        callback(null, following, others);
     });
 };
 
