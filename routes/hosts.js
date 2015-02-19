@@ -1,5 +1,5 @@
 // hosts.js
-// Routes to CRUD users.
+// Routes to CRUD hosts.
 
 var Host = require('../models/host');
 
@@ -77,11 +77,11 @@ exports.del = function (req, res, next) {
  * POST /hosts/:id/connect
  */
 exports.connect = function (req, res, next) {
-    Host.get(req.params.id, function (err, user) {
+    Host.get(req.params.id, function (err, host) {
         if (err) return next(err);
         Host.get(req.body.host.id, function (err, other) {
             if (err) return next(err);
-            user.connect(other, function (err) {
+            host.connect(other, function (err) {
                 if (err) return next(err);
                 res.redirect('/hosts/' + host.id);
             });
@@ -90,7 +90,7 @@ exports.connect = function (req, res, next) {
 };
 
 /**
- * POST /users/:id/unfollow
+ * POST /hosts/:id/unfollow
  */
 exports.disconnect = function (req, res, next) {
     Host.get(req.params.id, function (err, host) {

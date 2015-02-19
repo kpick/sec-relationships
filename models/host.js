@@ -86,7 +86,7 @@ Host.getAll = function (callback) {
     db.query(query, null, function (err, results) {
         if (err) return callback(err);
         var hosts = results.map(function (result) {
-            return new User(result['host']);
+            return new Host(result['host']);
         });
         callback(null, hosts);
     });
@@ -125,10 +125,27 @@ Host.prototype.connect = function (other, callback) {
     });
 };
 
+Host.prototype.disconnect = function (other, callback) {
+    var query = [
+        'MATCH (host:Host) -[rel:connected]-> (other:Host)',
+        'WHERE ID(host) = {hostId} AND ID(other) = {otherId}',
+        'DELETE rel',
+    ].join('\n')
+
+    var params = {
+        hostId: this.id,
+        otherId: other.id,
+    };
+
+    db.query(query, params, function (err) {
+        callback(err);
+    });
+};
+
 // calls callback w/ (err, following, others) where following is an array of
-// users this user follows, and others is all other users minus him/herself.
+// hosts this host is connected to.
 Host.prototype.getConnectedAndOthers = function (callback) {
-    // query all users and whether we follow each one or not:
+    // query all hosts and whether we follow each one or not:
     var query = [
         'MATCH (host:Host), (other:Host)',
         'OPTIONAL MATCH (host) -[rel:connected]-> (other)',
@@ -148,19 +165,19 @@ Host.prototype.getConnectedAndOthers = function (callback) {
         var others = [];
 
         for (var i = 0; i < results.length; i++) {
-            var other = new User(results[i]['other']);
-            var connected = results[i]['COUNT(rel)'];
+            var other = new Host(results[i]['other']);
+            var cxns = results[i]['COUNT(rel)'];
 
             if (host.id === other.id) {
                 continue;
-            } else if (connected) {
+            } else if (cxns) {
                 connected.push(other);
             } else {
                 others.push(other);
             }
         }
 
-        callback(null, following, others);
+        callback(null, connected, others);
     });
 };
 
