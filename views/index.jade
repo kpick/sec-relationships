@@ -1,7 +1,7 @@
 extends layout
 
 block content
-    h1= title
+    h1 Security Relationships Demo
 
     p
         | This is a template app showing the use of&nbsp;
@@ -11,12 +11,13 @@ block content
         |  library, available on npm as&nbsp;
         code neo4j
 
+    h2 Basic Functionality
     p.
         This app is a simple Security Role manager: it lets you add and remove
-        users and "follows" relationships between them.
+        users and "follows" relationships between them. It also lets you define machines and their connections. Eventually, we'll let you mix and match models, defining a series of unique relationships.
 
+    h2 Get started:
     p
         strong
-            | Get started:&nbsp;
             a(href='/users') View all users
             a(href='/hosts') View all hosts
