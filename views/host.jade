@@ -1,0 +1,43 @@
+extends layout
+
+block content
+    h1 Name: #{host.name}
+    h1 Score: #{host.vulnScore}
+
+    p
+        a(href='/hosts') Back to everyone
+
+    if connected.length
+        p #{host.name} is connected to #{connected.length} hosts:
+        ul.hosts
+            for other in connected
+                li.host
+                    form(action='/hosts/#{host.id}/disconnect', method='POST')
+                        a(href='/hosts/#{other.id}') #{other.name}
+                        input(type='hidden', name='host[id]', value='#{other.id}')
+                        input(type='submit', class='disconnect', value='x')
+    else
+        p #{host.name} isn't connected to anyone currently.
+
+    if others.length
+        form(action='/hosts/#{host.id}/connect', method='POST')
+            p Add a machine for #{host.name} to connect to:
+            label
+                select(name='host[id]', required)
+                    option(value='')
+                    for host in others
+                        option(value='#{host.id}') #{host.name}
+            input(type='submit', value='Connect')
+    else
+        p There's no one else left for #{host.name} to connect to!
+
+    form(action='/hosts/#{host.id}', method='POST')
+        p Edit this host:
+        input(type='text', name='name', placeholder='#{host.name}', required)
+        input(type='text', name='Vuln Score', placeholder='#{host.vulnScore}', required)
+        input(type='submit', value='Update')
+
+    form(action='/hosts/#{host.id}', method='POST', onsubmit='return confirm("Are you sure?");')
+        p And if you're feeling destructive…
+        input(type='hidden', name='_method', value='DELETE')
+        input(type='submit', value='Delete User')
