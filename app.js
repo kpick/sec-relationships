@@ -44,7 +44,7 @@ app.post('/hosts/:id/disconnect', routes.hosts.disconnect);
 
 
 app.get('/graph', routes.graph.view);
-app.get('/graph/json', routes.graph.json);
+app.get('/graph/test', routes.graph.test);
 
 
 http.createServer(app).listen(app.get('port'), function(){
