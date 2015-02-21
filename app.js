@@ -43,6 +43,10 @@ app.post('/hosts/:id/connect', routes.hosts.connect);
 app.post('/hosts/:id/disconnect', routes.hosts.disconnect);
 
 
+app.get('/graph', routes.graph.view);
+app.get('/graph/json', routes.graph.json);
+
+
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening at: http://localhost:%d/', app.get('port'));
 });
