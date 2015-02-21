@@ -1,0 +1,21 @@
+extends layout
+
+block content
+    h1 Graph
+    #alchemy.alchemy
+    script('src'= '/lib/alchemy.min.js')
+
+    script(type="text/javascript").
+        var config = {
+            dataSource: '/graph/test',
+            forceLocked: false,
+            graphHeight: function(){ return 800; },
+            graphWidth: function(){ return 800; },      
+            linkDistance: function(){ return 40; },
+            nodeTypes: {"node_type":[ "Maintainer",
+                "Contributor"]},
+            nodeCaption: function(node){ 
+                return node.caption + " " + node.fun_fact;}
+            };
+
+        alchemy = new Alchemy(config)
