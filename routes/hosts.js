@@ -2,6 +2,7 @@
 // Routes to CRUD hosts.
 
 var Host = require('../models/host');
+var jsonutil = require('../util/jsonutil');
 
 /**
  * GET /hosts
@@ -101,6 +102,17 @@ exports.disconnect = function (req, res, next) {
                 if (err) return next(err);
                 res.redirect('/hosts/' + host.id);
             });
+        });
+    });
+};
+
+exports.returnHostsForUser = function (req, res, next) {
+    Host.get(req.params.id, function (err, host) {
+        if (err) return next(err);
+        host.getConnectedAndOthers(function (err, connected) {
+            if (err) return next(err);
+            //res.send(connected);
+            res.send(jsonutil.convertToGraphJSON(host, connected));
         });
     });
 };

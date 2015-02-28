@@ -28,7 +28,7 @@ app.get('/users', routes.users.list);
 app.post('/users', routes.users.create);
 app.get('/users/:id', routes.users.show);
 app.post('/users/:id', routes.users.edit);
-app.del('/users/:id', routes.users.del);
+app.delete('/users/:id', routes.users.del);
 
 app.post('/users/:id/follow', routes.users.follow);
 app.post('/users/:id/unfollow', routes.users.unfollow);
@@ -37,13 +37,15 @@ app.get('/hosts', routes.hosts.list);
 app.post('/hosts', routes.hosts.create);
 app.get('/hosts/:id', routes.hosts.show);
 app.post('/hosts/:id', routes.hosts.edit);
-app.del('/hosts/:id', routes.hosts.del);
+app.delete('/hosts/:id', routes.hosts.del);
+app.get('/hosts/return/:id', routes.hosts.returnHostsForUser);
 
 app.post('/hosts/:id/connect', routes.hosts.connect);
 app.post('/hosts/:id/disconnect', routes.hosts.disconnect);
 
 
 app.get('/graph', routes.graph.view);
+app.get('/graph/render/:id', routes.graph.render);
 app.get('/graph/test', routes.graph.test);
 
 

@@ -7,13 +7,29 @@ block content
 
     script(type="text/javascript").
         var config = {
-            dataSource: '/graph/test',
+            dataSource: '/graph/render/1',
             forceLocked: false, 
             linkDistance: function(){ return 40; },
-            nodeTypes: {"node_type":[ "Maintainer",
-                "Contributor"]},
-            nodeCaption: function(node){ 
-                return node.caption + " " + node.fun_fact;}
-            };
+            nodeTypes: {"node_type":[ "HOST" ]},
+            nodeCaption: function (node) {
+                return node.caption;
+            }
+        };
 
-        alchemy = new Alchemy(config)
+        alchemy = new Alchemy(config);
+
+//        dataSource: '/graph/render/1',
+//                forceLocked: false,
+//                linkDistance: function () {
+//            return 40;
+//        },
+//        nodeTypes: {
+//            "node_type"
+//        :
+//            ["Maintainer",
+//                "Contributor"]
+//        },
+//        nodeCaption: function (node) {
+//            return node.caption + " " + node.fun_fact;
+//        }
+//        };

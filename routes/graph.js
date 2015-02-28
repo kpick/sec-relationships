@@ -1,13 +1,25 @@
-exports.view = function (req, res, next) {
+var Host = require('../models/host');
+var jsonutil = require('../util/jsonutil');
 
-	
-	res.render( 'graph',
-	{ "results": [
-	  ], "errors": []
-	});
+
+exports.view = function (req, res) {
+    res.render( 'graph',
+        { "results": [
+        ], "errors": []
+        });
 };
 
-exports.test = function (req, res, next) {
+exports.render = function (req, res, next) {
+    Host.get(req.params.id, function (err, host) {
+        if (err) return next(err);
+        host.getConnectedAndOthers(function (err, connected) {
+            if (err) return next(err);
+            res.send(jsonutil.convertToGraphJSON(host, connected));
+        });
+    });
+};
+
+exports.test = function (req, res) {
 	res.send({
 	  "comment": "AlchemyJS contributors",
 	  "nodes": [
@@ -82,4 +94,4 @@ exports.test = function (req, res, next) {
 	    }
 	  ]
 	});
-}
+};
