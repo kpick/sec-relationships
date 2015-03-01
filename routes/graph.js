@@ -19,6 +19,17 @@ exports.render = function (req, res, next) {
     });
 };
 
+//TODO: Need to figure out a way to recursively parse node's return in GraphJSON
+exports.renderAll = function (req, res, next) {
+    Host.get(req.params.id, function (err, host) {
+        if (err) return next(err);
+        host.getConnectedAndOthers(function (err, connected) {
+            if (err) return next(err);
+            res.send(jsonutil.convertToGraphJSON(host, connected));
+        });
+    });
+};
+
 exports.test = function (req, res) {
 	res.send({
 	  "comment": "AlchemyJS contributors",
