@@ -10,6 +10,7 @@ var jsonutil = require('../util/jsonutil');
 exports.list = function (req, res, next) {
     Host.getAll(function (err, hosts) {
         if (err) return next(err);
+        console.log(hosts);
         res.render('hosts', {
             hosts: hosts
         });

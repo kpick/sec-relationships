@@ -19,14 +19,27 @@ exports.render = function (req, res, next) {
     });
 };
 
-//TODO: Need to figure out a way to recursively parse node's return in GraphJSON
+//TODO: Need to figure out a way to recursively parse node's return in GraphJSON.
+//For now, will fetch the node list and find all connections from that specific node.
 exports.renderAll = function (req, res, next) {
-    Host.get(req.params.id, function (err, host) {
+    Host.getAll(function (err, hosts) {
+        // Get All Hosts
+        var nodeList = [];
+        var edgeList = [];
+
         if (err) return next(err);
-        host.getConnectedAndOthers(function (err, connected) {
-            if (err) return next(err);
-            res.send(jsonutil.convertToGraphJSON(host, connected));
-        });
+        var hostList = hosts;
+        jsonutil.buildNodeList(hostList, nodeList);
+
+        for (var i = 0; i < hostList.length; i++) {
+            Host.get(req.params.id, function (err, host) {
+                if (err) return next(err);
+                host.getConnectedAndOthers(function (err, connected) {
+                    if (err) return next(err);
+                    jsonutil.buildEdgeList(host, connected, edgeList);
+                });
+            });
+        }
     });
 };
 

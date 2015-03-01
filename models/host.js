@@ -7,7 +7,7 @@ var Host = module.exports = function Host(_node) {
     // all we'll really store is the node; the rest of our properties will be
     // derivable or just pass-through properties (see below).
     this._node = _node;
-}
+};
 
 // public instance properties:
 
@@ -28,7 +28,7 @@ Object.defineProperty(Host.prototype, 'vulnScore', {
     get: function () {
         return this._node.data['vulnScore'];
     },
-    set: function (name) {
+    set: function (vulnScore) {
         this._node.data['vulnScore'] = vulnScore;
     }
 });
@@ -53,8 +53,8 @@ Host.prototype.del = function (callback) {
         'DELETE host',
         'WITH host',
         'MATCH (host) -[rel:connected]- (other)',
-        'DELETE rel',
-    ].join('\n')
+        'DELETE rel'
+    ].join('\n');
 
     var params = {
         hostId: this.id
@@ -80,7 +80,7 @@ Host.get = function (id, callback) {
 Host.getAll = function (callback) {
     var query = [
         'MATCH (host:Host)',
-        'RETURN host',
+        'RETURN host'
     ].join('\n');
 
     db.query(query, null, function (err, results) {
@@ -105,7 +105,7 @@ Host.create = function (data, callback) {
     // that, since it uses Neo4j's REST API, which doesn't support that.)
     var query = [
         'CREATE (host:Host {data})',
-        'RETURN host',
+        'RETURN host'
     ].join('\n');
 
     var params = {
@@ -129,12 +129,12 @@ Host.prototype.disconnect = function (other, callback) {
     var query = [
         'MATCH (host:Host) -[rel:connected]-> (other:Host)',
         'WHERE ID(host) = {hostId} AND ID(other) = {otherId}',
-        'DELETE rel',
-    ].join('\n')
+        'DELETE rel'
+    ].join('\n');
 
     var params = {
         hostId: this.id,
-        otherId: other.id,
+        otherId: other.id
     };
 
     db.query(query, params, function (err) {
@@ -150,11 +150,11 @@ Host.prototype.getConnectedAndOthers = function (callback) {
         'MATCH (host:Host), (other:Host)',
         'OPTIONAL MATCH (host) -[rel:connected]-> (other)',
         'WHERE ID(host) = {hostId}',
-        'RETURN other, COUNT(rel)', // COUNT(rel) is a hack for 1 or 0
-    ].join('\n')
+        'RETURN other, COUNT(rel)' // COUNT(rel) is a hack for 1 or 0
+    ].join('\n');
 
     var params = {
-        hostId: this.id,
+        hostId: this.id
     };
 
     var host = this;
@@ -176,8 +176,42 @@ Host.prototype.getConnectedAndOthers = function (callback) {
                 others.push(other);
             }
         }
-
         callback(null, connected, others);
     });
 };
 
+// calls callback w/ (err, following, others) where following is an array of
+// hosts this host is connected to.
+Host.prototype.getConnected = function (callback) {
+    // query all hosts and whether we follow each one or not:
+    var query = [
+        'MATCH (host:Host), (other:Host)',
+        'OPTIONAL MATCH (host) -[rel:connected]-> (other)',
+        'WHERE ID(host) = {hostId}',
+        'RETURN other, COUNT(rel)' // COUNT(rel) is a hack for 1 or 0
+    ].join('\n');
+
+    var params = {
+        hostId: this.id
+    };
+
+    var host = this;
+    db.query(query, params, function (err, results) {
+        if (err) return callback(err);
+
+        var connected = [];
+        var others = [];
+
+        for (var i = 0; i < results.length; i++) {
+            var other = new Host(results[i]['other']);
+            var cxns = results[i]['COUNT(rel)'];
+
+            if (host.id === other.id) {
+                continue;
+            } else if (cxns) {
+                connected.push(other);
+            }
+        }
+        callback(null, connected, others);
+    });
+};

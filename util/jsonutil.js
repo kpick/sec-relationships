@@ -1,6 +1,5 @@
 var Jsonutil = module.exports;
 
-//TODO: IMPLEMENT ALL THIS USING RECURSION, TO GET MUTIDIMENSIONAL SUPPORT IN THE GRAPH.
 Jsonutil.convertToGraphJSON = function(node, connected) {
     var nodes = [];
     var edges = [];
@@ -26,4 +25,33 @@ Jsonutil.convertToGraphJSON = function(node, connected) {
     }
     return {'nodes': nodes, 'edges' : edges};
 };
+
+Jsonutil.buildNodeList = function(nodes, nodeList) {
+    console.log(nodes);
+    for (var i = 0; i < nodes.length; i++) {
+        nodeList.push({
+            'id': nodes[i].id,
+            'name': nodes[i].name,
+            'role': "HOST",
+            'caption': "Name: " + nodes[i].name + "  Vuln Score:" + nodes[i].vulnScore
+        });
+    }
+    return nodeList;
+};
+
+Jsonutil.buildEdgeList = function(rootNode, ctdNodes, edgeList) {
+    for (var i = 0; i < ctdNodes.length; i++) {
+        edgeList.push({
+            'caption': rootNode.name + ctdNodes[i].name,
+            'source': rootNode.id,
+            'target': ctdNodes[i].id
+        })
+    }
+    return edgeList;
+};
+
+Jsonutil.addWrapper = function(nodeList, edgeList) {
+    return {'nodes': nodeList, 'edges' : edgeList};
+};
+
 

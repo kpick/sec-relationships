@@ -46,6 +46,7 @@ app.post('/hosts/:id/disconnect', routes.hosts.disconnect);
 
 app.get('/graph', routes.graph.view);
 app.get('/graph/render/:id', routes.graph.render);
+app.get('/graph/renderAll', routes.graph.renderAll);
 app.get('/graph/test', routes.graph.test);
 
 
